@@ -1,0 +1,123 @@
+﻿@model EmployeeViewModel
+@{
+    ViewData["Title"] = "Employee Data";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4">
+            <label>Full Name : @Model.LoginName</label>
+        </div>
+    </div>
+    <div class="row" style="margin-top : 10px;">
+        <div class="col-sm-4">
+            <label id="timer"></label>
+        </div>
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Add Employee</button>
+        </div>
+        <div class="col-sm-4">
+            <a asp-controller="Account" asp-action="Logout"class = "btn btn-warning">
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Full Name</th>
+                    <th>Age</th>
+                    <th>DepartmentId</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (Model.EmployeeData != null)
+                    {
+                        foreach (var employee in Model.EmployeeData)
+                        {
+                            <tr>
+                                <td>@employee.Id</td>
+                                <td>@employee.FullName</td>
+                                <td>@employee.Age</td>
+                                <td>@employee.DepartmentId</td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-controller="Employee" asp-action="AddEmployee">
+
+                    <div class="form-group">
+                        <label asp-for="FullName">Full Name</label>
+                        <input asp-for="FullName" type="text" required class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Age"></label>
+                        <input asp-for="Age" type="number" required class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DepartmentId">Department Id</label>
+                        <input asp-for="DepartmentId" type="number" id="pwd" required class="form-control" maxlength="10" />
+                    </div>
+
+                    <input type="submit" style="margin-top:7px;" class="btn btn-primary" value="Add Employee" />
+
+                    <div class="form-group">
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    var timerVar = setInterval(countTimer, 1000);
+    var totalSeconds = 0;
+    if(sessionStorage.getItem("totalSeconds"))
+    {
+        totalSeconds = sessionStorage.getItem("totalSeconds");
+    }
+    function countTimer() {
+       ++totalSeconds;
+       var hour = Math.floor(totalSeconds /3600);
+       var minute = Math.floor((totalSeconds - hour*3600)/60);
+       var seconds = totalSeconds - (hour*3600 + minute*60);
+       if(hour < 10)
+         hour = "0"+hour;
+       if(minute < 10)
+         minute = "0"+minute;
+       if(seconds < 10)
+         seconds = "0"+seconds;
+
+       sessionStorage.setItem("totalSeconds",totalSeconds) ;
+       document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
+    }
+</script>
+}
